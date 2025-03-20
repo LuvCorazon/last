@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import Director, Movie, Review
-from .serializers import DirectorSerializer, MovieSerializer, ReviewSerializer
+from .serializers import DirectorSerializer, MovieSerializer, ReviewSerializer, MovieReviewsSerializer
 
 class DirectorListAPIView(generics.ListAPIView):
     queryset = Director.objects.all()
@@ -25,3 +25,7 @@ class ReviewListAPIView(generics.ListAPIView):
 class ReviewDetailAPIView(generics.RetrieveAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+class MovieReviewsListAPIView(generics.ListAPIView):
+    queryset = Movie.objects.prefetch_related('review_set').all()
+    serializer_class = MovieReviewsSerializer

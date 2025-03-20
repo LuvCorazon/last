@@ -22,7 +22,8 @@ from movie_app.views import (
     MovieListAPIView,
     MovieDetailAPIView,
     ReviewListAPIView,
-    ReviewDetailAPIView
+    ReviewDetailAPIView,
+    MovieReviewsListAPIView,
 )
 
 urlpatterns = [
@@ -33,4 +34,5 @@ urlpatterns = [
     path('api/v1/movies/<int:pk>/', MovieDetailAPIView.as_view()),
     path('api/v1/reviews/', ReviewListAPIView.as_view()),
     path('api/v1/reviews/<int:pk>/', ReviewDetailAPIView.as_view()),
+    path('api/v1/movies/reviews/', MovieReviewsListAPIView.as_view()),
 ]

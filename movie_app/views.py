@@ -6,9 +6,59 @@ from .serializers import (
     DirectorSerializer,
     MovieSerializer,
     ReviewSerializer,
-    MovieDetailSerializer
+    MovieDetailSerializer,
+    UserRegistrationSerializer,
+    ConfirmationSerializer
 )
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from .models import User, ConfirmationCode
 from django.db import transaction
+
+
+@api_view(['POST'])
+def register_user(request):
+    serializer = UserRegistrationSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"detail": "Код подтверждения отправлен."}, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+def confirm_user(request):
+    serializer = ConfirmationSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=400)
+
+    username = serializer.validated_data['username']
+    code = serializer.validated_data['code']
+
+    try:
+        user = User.objects.get(username=username)
+        confirmation = ConfirmationCode.objects.get(user=user)
+    except (User.DoesNotExist, ConfirmationCode.DoesNotExist):
+        return Response({"detail": "Неверные данные"}, status=400)
+
+    if confirmation.code == code:
+        user.is_active = True
+        user.save()
+        confirmation.delete()
+        return Response({"detail": "Аккаунт активирован!"})
+    return Response({"detail": "Неверный код"}, status=400)
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
 
 
 # Directors

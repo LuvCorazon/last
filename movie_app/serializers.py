@@ -1,6 +1,30 @@
 from rest_framework import serializers
 from .models import Director, Movie, Review, Tag
+from rest_framework import serializers
+from .models import User, ConfirmationCode
 
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data.get('email'),
+            is_active=False
+        )
+        code = ConfirmationCode.generate_code()
+        ConfirmationCode.objects.create(user=user, code=code)
+        return user
+
+class ConfirmationSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    code = serializers.CharField(max_length=6)
 
 class DirectorSerializer(serializers.ModelSerializer):
     class Meta:

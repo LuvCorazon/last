@@ -16,23 +16,31 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from movie_app.views import (
-    DirectorListAPIView,
-    DirectorDetailAPIView,
-    MovieListAPIView,
-    MovieDetailAPIView,
-    ReviewListAPIView,
-    ReviewDetailAPIView,
-    MovieReviewsListAPIView,
-)
+from movie_app.views import (directors_list_create_api_view,
+directors_detail_api_view,
+movies_list_create_api_view,
+movies_detail_api_view,
+reviews_detail_api_view ,
+reviews_list_create_api_view,
+register_user,
+confirm_user,
+CustomAuthToken)
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/directors/', DirectorListAPIView.as_view()),
-    path('api/v1/directors/<int:pk>/', DirectorDetailAPIView.as_view()),
-    path('api/v1/movies/', MovieListAPIView.as_view()),
-    path('api/v1/movies/<int:pk>/', MovieDetailAPIView.as_view()),
-    path('api/v1/reviews/', ReviewListAPIView.as_view()),
-    path('api/v1/reviews/<int:pk>/', ReviewDetailAPIView.as_view()),
-    path('api/v1/movies/reviews/', MovieReviewsListAPIView.as_view()),
+    # Directors
+    path('api/v1/directors/', directors_list_create_api_view),
+    path('api/v1/directors/<int:id>/', directors_detail_api_view),
+    # Movies
+    path('api/v1/movies/', movies_list_create_api_view),
+    path('api/v1/movies/<int:id>/', movies_detail_api_view),
+    # Reviews
+    path('api/v1/reviews/', reviews_list_create_api_view),
+    path('api/v1/reviews/<int:id>/', reviews_detail_api_view),
+    path('api/v1/users/register/', register_user),
+    path('api/v1/users/confirm/', confirm_user),
+    path('api/v1/login/', CustomAuthToken.as_view())
 ]

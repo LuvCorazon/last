@@ -15,32 +15,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.urls import path# urls.py
+from django.contrib import admin
 from django.urls import path
-from movie_app.views import (directors_list_create_api_view,
-directors_detail_api_view,
-movies_list_create_api_view,
-movies_detail_api_view,
-reviews_detail_api_view ,
-reviews_list_create_api_view,
-register_user,
-confirm_user,
-CustomAuthToken)
-
-
-
+from movie_app.views import (
+    DirectorListCreateView,
+    DirectorRetrieveUpdateDestroyView,
+    MovieListCreateView,
+    MovieRetrieveUpdateDestroyView,
+    ReviewListCreateView,
+    ReviewRetrieveUpdateDestroyView,
+    RegisterUserView,
+    ConfirmUserView,
+    CustomAuthToken
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Directors
-    path('api/v1/directors/', directors_list_create_api_view),
-    path('api/v1/directors/<int:id>/', directors_detail_api_view),
+    path('api/v1/directors/', DirectorListCreateView.as_view()),
+    path('api/v1/directors/<int:id>/', DirectorRetrieveUpdateDestroyView.as_view()),
     # Movies
-    path('api/v1/movies/', movies_list_create_api_view),
-    path('api/v1/movies/<int:id>/', movies_detail_api_view),
+    path('api/v1/movies/', MovieListCreateView.as_view()),
+    path('api/v1/movies/<int:id>/', MovieRetrieveUpdateDestroyView.as_view()),
     # Reviews
-    path('api/v1/reviews/', reviews_list_create_api_view),
-    path('api/v1/reviews/<int:id>/', reviews_detail_api_view),
-    path('api/v1/users/register/', register_user),
-    path('api/v1/users/confirm/', confirm_user),
+    path('api/v1/reviews/', ReviewListCreateView.as_view()),
+    path('api/v1/reviews/<int:id>/', ReviewRetrieveUpdateDestroyView.as_view()),
+    # Users
+    path('api/v1/users/register/', RegisterUserView.as_view()),
+    path('api/v1/users/confirm/', ConfirmUserView.as_view()),
     path('api/v1/login/', CustomAuthToken.as_view())
 ]
+
